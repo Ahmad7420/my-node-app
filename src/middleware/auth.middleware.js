@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-const { getUserById } = require("../services/user.service");
+import { getUserById } from "../services/user.service.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
-async function authenticate(req, res, next) {
+async function authenticateUser(req, res, next) {
   try {
     const authHeader = req.headers.authorization || "";
     const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
@@ -36,4 +36,4 @@ async function authenticate(req, res, next) {
   }
 }
 
-module.exports = authenticate;
+export default authenticateUser;
