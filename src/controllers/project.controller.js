@@ -3,6 +3,7 @@ import {
   getAllProjectService,
 } from "../services/project.service.js";
 import s3 from "../config/s3.js";
+import { getPreSignedUrl } from "../utils/s3.helper.js";
 
 export const getAllProject = async (req, res) => {
   try {
@@ -31,13 +32,14 @@ export const createProject = async (req, res) => {
       ACL: "public-read",
     };
 
-    const uploadResult = await s3.upload(uploadParams).promise();
+    await s3.upload(uploadParams).promise();
+    const signedUrl = await getPreSignedUrl(uploadParams);
 
     const projectPayload = {
       name,
       description,
       number,
-      thumbnailUrl: uploadResult.Location,
+      thumbnailUrl: signedUrl,
     };
     const newProject = await createProjectService(projectPayload);
     return res.status(201).json({
